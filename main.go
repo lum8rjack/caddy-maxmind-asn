@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
@@ -61,9 +62,9 @@ func (m *MaxmindASN) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 					m.DbPath = d.Val()
 					current = 0
 				case 2:
-					m.AllowASOs = append(m.AllowASOs, d.Val())
+					m.AllowASOs = append(m.AllowASOs, strings.ToLower(d.Val()))
 				case 3:
-					m.DenyASOs = append(m.DenyASOs, d.Val())
+					m.DenyASOs = append(m.DenyASOs, strings.ToLower(d.Val()))
 				default:
 					return fmt.Errorf("unexpected config parameter %s", d.Val())
 				}
@@ -103,7 +104,7 @@ func (m *MaxmindASN) checkAllowed(asoresult string) bool {
 	}
 	if len(m.DenyASOs) > 0 {
 		for _, i := range m.DenyASOs {
-			if i == asoresult {
+			if strings.ContainsAny(asoresult, i) {
 				return false
 			}
 		}
@@ -111,7 +112,7 @@ func (m *MaxmindASN) checkAllowed(asoresult string) bool {
 	}
 	if len(m.AllowASOs) > 0 {
 		for _, i := range m.AllowASOs {
-			if i == asoresult {
+			if strings.ContainsAny(asoresult, i) {
 				return true
 			}
 		}
@@ -155,7 +156,7 @@ func (m *MaxmindASN) Match(r *http.Request) bool {
 	)
 
 	// Check if the IP against the allowed/denied ASOs
-	if !m.checkAllowed(record.ASO) {
+	if !m.checkAllowed(strings.ToLower(record.ASO)) {
 		m.logger.Debug("ASO not allowed", zap.String("autonomous_system_organization", record.ASO))
 		return false
 	}
