@@ -48,7 +48,7 @@ test.example.org {
 ```
 test.example.org {
   @myasn {
-    maxmind_geolocation {
+    maxmind_asn {
       db_path "/usr/share/MaxMind/GeoLite2-ASN.mmdb"
       deny_asos amazon
     }
