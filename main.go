@@ -104,7 +104,7 @@ func (m *MaxmindASN) checkAllowed(asoresult string) bool {
 	}
 	if len(m.DenyASOs) > 0 {
 		for _, i := range m.DenyASOs {
-			if strings.ContainsAny(asoresult, i) {
+			if strings.Contains(asoresult, i) {
 				return false
 			}
 		}
@@ -112,7 +112,7 @@ func (m *MaxmindASN) checkAllowed(asoresult string) bool {
 	}
 	if len(m.AllowASOs) > 0 {
 		for _, i := range m.AllowASOs {
-			if strings.ContainsAny(asoresult, i) {
+			if strings.Contains(asoresult, i) {
 				return true
 			}
 		}
