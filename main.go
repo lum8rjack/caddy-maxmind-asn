@@ -89,7 +89,7 @@ func (m *MaxmindASN) Provision(ctx caddy.Context) error {
 		return fmt.Errorf("cannot open database file %s: %v", m.DbPath, err)
 	}
 
-	m.logger.Debug("provisioned", zap.String("maxmind_db", m.DbPath), zap.Int("allowed_asos", len(m.AllowASOs)), zap.Int("denied_asos", len(m.DenyASOs)))
+	m.logger.Info("provisioned", zap.String("maxmind_db", m.DbPath), zap.Int("allowed_asos", len(m.AllowASOs)), zap.Int("denied_asos", len(m.DenyASOs)))
 	return nil
 }
 
