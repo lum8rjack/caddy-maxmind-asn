@@ -88,6 +88,8 @@ func (m *MaxmindASN) Provision(ctx caddy.Context) error {
 	if err != nil {
 		return fmt.Errorf("cannot open database file %s: %v", m.DbPath, err)
 	}
+
+	m.logger.Debug("provisioned", zap.String("maxmind_db", m.DbPath), zap.Int("allowed_asos", len(m.AllowASOs)), zap.Int("denied_asos", len(m.DenyASOs)))
 	return nil
 }
 
@@ -149,7 +151,7 @@ func (m *MaxmindASN) Match(r *http.Request) bool {
 	}
 
 	m.logger.Debug(
-		"Detected MaxMind data",
+		"detected MaxMind data",
 		zap.String("ip", r.RemoteAddr),
 		zap.Int("autonomous_system_number", record.ASN),
 		zap.String("autonomous_system_organization", record.ASO),
@@ -157,7 +159,7 @@ func (m *MaxmindASN) Match(r *http.Request) bool {
 
 	// Check if the IP against the allowed/denied ASOs
 	if !m.checkAllowed(strings.ToLower(record.ASO)) {
-		m.logger.Debug("ASO not allowed", zap.String("autonomous_system_organization", record.ASO))
+		m.logger.Debug("aso not allowed", zap.String("autonomous_system_organization", record.ASO))
 		return false
 	}
 
